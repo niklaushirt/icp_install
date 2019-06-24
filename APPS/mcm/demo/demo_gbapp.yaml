@@ -1,0 +1,242 @@
+
+# Source: gbapp/templates/application.yaml
+apiVersion: app.k8s.io/v1beta1
+kind: Application
+metadata:
+  name: gbapp-gbapp
+  namespace: default
+  labels:
+    app: gbapp
+    chart: gbapp-0.1.0
+    release: gbapp
+    heritage: Tiller
+    name: gbapp-gbapp
+spec:
+  selector:
+    matchExpressions:
+    - key: app
+      operator: In
+      values:
+      - gbapp
+      - gbf
+      - gbrm
+      - gbrs
+  componentKinds:
+  - group: core
+    kind: Pods
+
+---
+# Source: gbapp/templates/appfrontrel.yaml
+apiVersion: mcm.ibm.com/v1alpha1
+kind: ApplicationRelationship
+metadata:
+  name: gbapp-gbapp-appfrontend
+  namespace: default
+  labels:
+    app: gbapp
+    chart: gbapp-0.1.0
+    release: gbapp
+    heritage: Tiller
+spec:
+  destination:
+    kind: Deployable
+    name: gbapp-gbapp
+  source:
+    kind: Application
+    name: gbapp-gbapp
+  type: contains
+
+---
+# Source: gbapp/templates/appmasterrel.yaml
+apiVersion: mcm.ibm.com/v1alpha1
+kind: ApplicationRelationship
+metadata:
+  name: gbapp-gbapp-appmaster
+  namespace: default
+  labels:
+    app: gbapp
+    chart: gbapp-0.1.0
+    release: gbapp
+    heritage: Tiller
+spec:
+  destination:
+    kind: Deployable
+    name: gbapp-gbapp-redismaster
+  source:
+    kind: Application
+    name: gbapp-gbapp
+  type: contains
+
+---
+# Source: gbapp/templates/slaverelationship.yaml
+apiVersion: mcm.ibm.com/v1alpha1
+kind: ApplicationRelationship
+metadata:
+  name: gbapp-gbapp-slave
+  namespace: default
+  labels:
+    app: gbapp
+    chart: gbapp-0.1.0
+    release: gbapp
+    heritage: Tiller
+spec:
+  destination:
+    kind: Deployable
+    name: gbapp-gbapp-redisslave
+  source:
+    kind: Deployable
+    name: gbapp-gbapp
+  type: usesCreated
+
+---
+# Source: gbapp/templates/frontenddeployable.yaml
+apiVersion: mcm.ibm.com/v1alpha1
+kind: Deployable
+metadata:
+  name: gbapp-gbapp
+  namespace: default
+  labels:
+    app: gbapp
+    chart: gbapp-0.1.0
+    release: gbapp
+    heritage: Tiller
+    name: gbapp-gbapp
+    servicekind: ApplicationService
+spec:
+  deployer:
+    kind: helm
+    helm:
+      chartURL: https://raw.githubusercontent.com/abdasgupta/helm-repo/master/3.1-mcm-guestbook/gbf-0.1.0.tgz
+      namespace: default
+
+---
+# Source: gbapp/templates/masterdeployable.yaml
+apiVersion: mcm.ibm.com/v1alpha1
+kind: Deployable
+metadata:
+  name: gbapp-gbapp-redismaster
+  namespace: default
+  labels:
+    app: gbapp
+    chart: gbapp-0.1.0
+    release: gbapp
+    heritage: Tiller
+    name: gbapp-gbapp-redismaster
+    servicekind: CacheService
+spec:
+  deployer:
+    kind: helm
+    helm:
+      chartURL: https://raw.githubusercontent.com/abdasgupta/helm-repo/master/3.1-mcm-guestbook/gbrm-0.1.0.tgz
+      namespace: default
+
+---
+# Source: gbapp/templates/slavedeployable.yaml
+apiVersion: mcm.ibm.com/v1alpha1
+kind: Deployable
+metadata:
+  name: gbapp-gbapp-redisslave
+  namespace: default
+  labels:
+    app: gbapp
+    chart: gbapp-0.1.0
+    release: gbapp
+    heritage: Tiller
+    name: gbapp-gbapp-redisslave
+    servicekind: CacheService
+spec:
+  deployer:
+    kind: helm
+    helm:
+      chartURL: https://raw.githubusercontent.com/abdasgupta/helm-repo/master/3.1-mcm-guestbook/gbrs-0.1.0.tgz
+      namespace: default
+
+---
+# Source: gbapp/templates/placementbinding.yaml
+apiVersion: mcm.ibm.com/v1alpha1
+kind: PlacementBinding
+metadata:
+  name: gbapp-gbapp
+  namespace: default
+  labels:
+    app: gbapp
+    chart: gbapp-0.1.0
+    release: gbapp
+    heritage: Tiller
+    name: gbapp-gbapp
+    servicekind: CacheService
+placementRef:
+  apiGroup: mcm.ibm.com
+  kind: PlacementPolicy
+  name: gbapp-gbapp
+subjects:
+- apiGroup: mcm.ibm.com
+  kind: Deployable
+  name: gbapp-gbapp
+---
+apiVersion: mcm.ibm.com/v1alpha1
+kind: PlacementBinding
+metadata:
+  name: gbapp-gbapp-redismaster
+  namespace: default
+  labels:
+    app: gbapp
+    chart: gbapp-0.1.0
+    release: gbapp
+    heritage: Tiller
+    name: gbapp-gbapp
+    servicekind: CacheService
+placementRef:
+  apiGroup: mcm.ibm.com
+  kind: PlacementPolicy
+  name: gbapp-gbapp-redismaster
+subjects:
+- apiGroup: mcm.ibm.com
+  kind: Deployable
+  name: gbapp-gbapp-redismaster
+
+---
+# Source: gbapp/templates/placement.yaml
+apiVersion: mcm.ibm.com/v1alpha1
+kind: PlacementPolicy
+metadata:
+  name: gbapp-gbapp
+  namespace: default
+  labels:
+    app: gbapp
+    chart: gbapp-0.1.0
+    release: gbapp
+    heritage: Tiller
+    name: gbapp-gbapp
+    servicekind: CacheService
+spec:
+  clusterReplicas: 1
+  clusterLabels:
+    matchLabels:
+      environment: Dev
+      region: US
+  resourceHint:
+    type: cpu
+
+  compliances:
+---
+apiVersion: mcm.ibm.com/v1alpha1
+kind: PlacementPolicy
+metadata:
+  name: gbapp-gbapp-redismaster
+  namespace: default
+  labels:
+    app: gbapp
+    chart: gbapp-0.1.0
+    release: gbapp
+    heritage: Tiller
+    name: gbapp-gbapp-redismaster
+    servicekind: CacheService
+spec:
+  clusterReplicas: 1
+  clusterLabels:
+    matchLabels:
+      environment: Prod
+      region: US
+  resourceHint:
+    type: cpu

@@ -1,0 +1,72 @@
+apiVersion: compliance.mcm.ibm.com/v1alpha1
+kind: Compliance
+metadata:
+  name: default-dev
+  finalizers:
+    - propagator.finalizer.mcm.ibm.com
+  generation: 1
+  namespace: mcm-namespace
+spec:
+  runtime-rules:
+    - apiVersion: policy.mcm.ibm.com/v1alpha1
+      kind: Policy
+      metadata:
+        name: policy-dev
+        labels:
+          targets: dev
+      spec:
+        complianceType: musthave
+        namespaces:
+          exclude:
+            - kube*
+          include:
+            - default
+        object-templates:
+          - complianceType: musthave
+            objectDefinition:
+              apiVersion: v1
+              kind: Pod
+              metadata:
+                name: websphere-liberty
+              spec:
+                containers:
+                  - name: websphere-liberty
+                    env:
+                      - name: LICENSE
+                        value: null
+                      - name: WLP_LOGGING_CONSOLE_FORMAT
+                        value: json
+                      - name: WLP_LOGGING_CONSOLE_LOGLEVEL
+                        value: info
+                      - name: WLP_LOGGING_CONSOLE_SOURCE
+                        value: 'message,trace,accessLog,ffdc'
+                    image: 'websphere-liberty:18.0.0.4-microProfile1'
+                    ports:
+                      - containerPort: 9080
+        remediationAction: enforce
+---
+# this is a placement policy that selects clusters based on a label
+apiVersion: mcm.ibm.com/v1alpha1
+kind: PlacementPolicy
+metadata:
+  name: placement-compliance-default-dev
+  namespace: mcm-namespace
+spec:
+  clusterLabels:
+    matchLabels:
+      environment: Dev
+---
+# this is a placement binding that binds the placement policy and the compliance policy
+apiVersion: mcm.ibm.com/v1alpha1
+kind: PlacementBinding
+metadata:
+  name: binding-compliance-default-dev
+  namespace: multicluster-endpoint
+placementRef:
+  name: placement-compliance-icp-base
+  apiGroup: mcm.ibm.com
+  kind: PlacementPolicy
+subjects:
+- name: default-dev
+  apiGroup: mcm.ibm.com
+  kind: Compliance

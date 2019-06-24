@@ -1,0 +1,27 @@
+apiVersion: mcm.ibm.com/v1alpha1
+kind: HelmRepo
+metadata:
+  name: mydemo
+spec:
+  url: https://raw.githubusercontent.com/niklaushirt/charts/master/helm/charts/repo/stable
+---
+apiVersion: mcm.ibm.com/v1alpha1
+kind: HelmRepo
+metadata:
+  name: google
+spec:
+  url: https://kubernetes-charts.storage.googleapis.com/
+---
+apiVersion: mcm.ibm.com/v1alpha1
+kind: HelmRepo
+metadata:
+  name: ibm-charts
+spec:
+  url: https://raw.githubusercontent.com/IBM/charts/master/repo/stable/
+---
+apiVersion: mcm.ibm.com/v1alpha1
+kind: HelmRepo
+metadata:
+  name: argocd
+spec:
+  url: https://raw.githubusercontent.com/niklaushirt/gitops-playground/master/charts/

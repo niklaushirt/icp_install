@@ -1,0 +1,7 @@
+apiVersion: securityenforcement.admission.cloud.ibm.com/v1beta1
+kind: ClusterImagePolicy
+metadata:
+  name: my-cluster-images-nfs-client
+spec:
+  repositories:
+    - name: quay.io/external_storage/*
