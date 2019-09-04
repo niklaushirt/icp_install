@@ -2,7 +2,7 @@
 # FIRST Install
 
 ```
-git clone https://github.com/niklaushirt/icp_ubuntu_install_private.git INSTALL
+git clone https://github.com/niklaushirt/icp_ubuntu_install.git INSTALL
 cd INSTALL
 ```
 

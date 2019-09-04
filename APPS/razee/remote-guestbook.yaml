@@ -1,0 +1,9 @@
+apiVersion: kapitan.razee.io/v1alpha1
+kind: RemoteResource
+metadata:
+  name: remote-guestbook
+  namespace: default
+spec:
+  requests:
+    - options:
+        url: https://raw.githubusercontent.com/gitopsk8s/test/master/guestbook.yaml

@@ -1,9 +1,6 @@
 
 source ~/INSTALL/0_variables.sh
 
-export KUBECONFIG=kubeconfig
-klogin
-unset KUBECONFIG
 
 export HUB_IP=9.30.248.180:8443
 export CLUSTER_NAME=icp-fyre-mcm
@@ -15,6 +12,10 @@ export CLUSTER_ENV=Prod
 export CLUSTER_REGION=US 
 export CLUSTER_DATACENTER=dallas 
 export CLUSTER_OWNER=IT
+
+export KUBECONFIG=kubeconfig
+<COPY PASTE TARGET CLUSTER from Configure Client Web Interface>
+unset KUBECONFIG
 
 
 cloudctl login -a https://$HUB_IP --skip-ssl-validation -u admin -p admin -n kube-system
