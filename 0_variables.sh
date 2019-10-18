@@ -41,18 +41,18 @@ export SSH_USER=root
 
 #export PUBLIC_IP=x.x.x.x
 #export MASTER_IP=x.x.x.x
-export PUBLIC_IP=192.168.27.199
-export MASTER_IP=192.168.27.199
+export PUBLIC_IP=94.23.25.93
+export MASTER_IP=94.23.25.93
 
 # WORKER_IPS[0] should be the same worker at WORKER_HOSTNAMES[0]
 #export WORKER_IPS=("192.168.27.199" "192.168.27.198" "192.168.27.197")
 #export WORKER_HOSTNAMES=("host1" "host2" "host3")
-export WORKER_IPS=("192.168.27.199")
-export WORKER_HOSTNAMES=("mycluster.icp")
+export WORKER_IPS=("94.23.25.93")
+export WORKER_HOSTNAMES=("ns309835")
 
 # Monitoring IP, only taken into account if filled in
-export MONITORING_IP=x.x.x.x
-export MONITORING_HOSTNAME="name"
+export MONITORING_IP=94.23.25.93
+export MONITORING_HOSTNAME="ns309835"
 
 
 # ----------------------------------------------------------------------------------------------------\\
