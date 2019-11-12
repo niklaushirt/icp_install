@@ -1,0 +1,104 @@
+
+apiVersion: mcm.ibm.com/v1alpha1
+kind: PlacementBinding
+metadata:
+  labels:
+    name: binding-policy-all
+    placementPolicy: placement-policy-all
+  name: binding-policy-all
+  namespace: kube-system
+placementRef:
+  apiGroup: mcm.ibm.com
+  kind: PlacementPolicy
+  name: placement-policy-all
+subjects:
+- apiGroup: policy.mcm.ibm.com
+  kind: Policy
+  name: policy-all
+---
+apiVersion: mcm.ibm.com/v1alpha1
+kind: PlacementBinding
+metadata:
+  labels:
+    name: binding-policy-dev
+    placementPolicy: placement-policy-dev
+  name: binding-policy-dev
+  namespace: kube-system
+placementRef:
+  apiGroup: mcm.ibm.com
+  kind: PlacementPolicy
+  name: placement-policy-dev
+subjects:
+- apiGroup: policy.mcm.ibm.com
+  kind: Policy
+  name: policy-dev
+---
+apiVersion: mcm.ibm.com/v1alpha1
+kind: PlacementBinding
+metadata:
+  labels:
+    name: binding-policy-mcm
+    placementPolicy: placement-policy-mcm
+  name: binding-policy-mcm
+  namespace: kube-system
+placementRef:
+  apiGroup: mcm.ibm.com
+  kind: PlacementPolicy
+  name: placement-policy-mcm
+subjects:
+- apiGroup: policy.mcm.ibm.com
+  kind: Policy
+  name: policy-mcm
+---
+apiVersion: mcm.ibm.com/v1alpha1
+kind: PlacementBinding
+metadata:
+  labels:
+    name: binding-policy-network
+    placementPolicy: placement-policy-network
+  name: binding-policy-network
+  namespace: kube-system
+placementRef:
+  apiGroup: mcm.ibm.com
+  kind: PlacementPolicy
+  name: placement-policy-network
+subjects:
+- apiGroup: policy.mcm.ibm.com
+  kind: Policy
+  name: policy-network
+---
+apiVersion: mcm.ibm.com/v1alpha1
+kind: PlacementBinding
+metadata:
+  labels:
+    name: binding-policy-prod
+    placementPolicy: placement-policy-prod
+  name: binding-policy-prod
+  namespace: kube-system
+placementRef:
+  apiGroup: mcm.ibm.com
+  kind: PlacementPolicy
+  name: placement-policy-prod
+subjects:
+- apiGroup: policy.mcm.ibm.com
+  kind: Policy
+  name: policy-prod
+---
+apiVersion: mcm.ibm.com/v1alpha1
+kind: PlacementBinding
+metadata:
+  labels:
+    name: binding-policy-rhocp-sdn
+    placementPolicy: placement-policy-rhocp-sdn
+  name: binding-policy-rhocp-sdn
+  namespace: kube-system
+placementRef:
+  apiGroup: mcm.ibm.com
+  kind: PlacementPolicy
+  name: placement-policy-rhocp-sdn
+subjects:
+- apiGroup: policy.mcm.ibm.com
+  kind: Policy
+  name: policy-rhocp-sdn
+
+

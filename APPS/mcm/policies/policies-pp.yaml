@@ -1,0 +1,136 @@
+
+apiVersion: mcm.ibm.com/v1alpha1
+kind: PlacementPolicy
+metadata:
+  annotations:
+    mcm.ibm.com/user-group: c3lzdGVtOnNlcnZpY2VhY2NvdW50cyxzeXN0ZW06c2VydmljZWFjY291bnRzOmt1YmUtc3lzdGVtLHN5c3RlbTphdXRoZW50aWNhdGVk
+    mcm.ibm.com/user-identity: c3lzdGVtOnNlcnZpY2VhY2NvdW50Omt1YmUtc3lzdGVtOmRlZmF1bHQ=
+  name: placement-policy-all
+  namespace: kube-system
+spec:
+  clusterLabels:
+    matchExpressions:
+    - key: environment
+      operator: In
+      values:
+      - MCM
+  resourceHint: {}
+  resourceSelector: {}
+---
+apiVersion: mcm.ibm.com/v1alpha1
+kind: PlacementPolicy
+metadata:
+  annotations:
+    mcm.ibm.com/user-group: c3lzdGVtOmF1dGhlbnRpY2F0ZWQ=
+    mcm.ibm.com/user-identity: aHR0cHM6Ly8xMjcuMC4wLjE6ODQ0My9pZGF1dGgvb2lkYy9lbmRwb2ludC9PUCNhZG1pbg==
+  name: placement-policy-dev
+  namespace: kube-system
+spec:
+  clusterLabels:
+    matchExpressions:
+    - key: environment
+      operator: In
+      values:
+      - Dev
+    - key: owner
+      operator: In
+      values:
+      - IT
+  resourceHint: {}
+  resourceSelector: {}
+---
+apiVersion: mcm.ibm.com/v1alpha1
+kind: PlacementPolicy
+metadata:
+  annotations:
+    mcm.ibm.com/user-group: c3lzdGVtOnNlcnZpY2VhY2NvdW50cyxzeXN0ZW06c2VydmljZWFjY291bnRzOmt1YmUtc3lzdGVtLHN5c3RlbTphdXRoZW50aWNhdGVk
+    mcm.ibm.com/user-identity: c3lzdGVtOnNlcnZpY2VhY2NvdW50Omt1YmUtc3lzdGVtOmRlZmF1bHQ=
+  name: placement-policy-mcm
+  namespace: kube-system
+spec:
+  clusterLabels:
+    matchExpressions:
+    - key: environment
+      operator: In
+      values:
+      - Dev
+      - Prod
+    - key: owner
+      operator: In
+      values:
+      - IT
+  resourceHint: {}
+  resourceSelector: {}
+---
+apiVersion: mcm.ibm.com/v1alpha1
+kind: PlacementPolicy
+metadata:
+  annotations:
+    mcm.ibm.com/user-group: c3lzdGVtOnNlcnZpY2VhY2NvdW50cyxzeXN0ZW06c2VydmljZWFjY291bnRzOmt1YmUtc3lzdGVtLHN5c3RlbTphdXRoZW50aWNhdGVk
+    mcm.ibm.com/user-identity: c3lzdGVtOnNlcnZpY2VhY2NvdW50Omt1YmUtc3lzdGVtOmRlZmF1bHQ=
+  name: placement-policy-network
+  namespace: kube-system
+spec:
+  clusterLabels:
+    matchExpressions:
+    - key: environment
+      operator: In
+      values:
+      - Dev
+      - Prod
+      - QA
+    - key: cloud
+      operator: In
+      values:
+      - IBM
+    - key: region
+      operator: In
+      values:
+      - EU
+  resourceHint: {}
+  resourceSelector: {}
+---
+apiVersion: mcm.ibm.com/v1alpha1
+kind: PlacementPolicy
+metadata:
+  annotations:
+    mcm.ibm.com/user-group: c3lzdGVtOnNlcnZpY2VhY2NvdW50cyxzeXN0ZW06c2VydmljZWFjY291bnRzOmt1YmUtc3lzdGVtLHN5c3RlbTphdXRoZW50aWNhdGVk
+    mcm.ibm.com/user-identity: c3lzdGVtOnNlcnZpY2VhY2NvdW50Omt1YmUtc3lzdGVtOmRlZmF1bHQ=
+  name: placement-policy-prod
+  namespace: kube-system
+spec:
+  clusterLabels:
+    matchExpressions:
+    - key: environment
+      operator: In
+      values:
+      - Prod
+  resourceHint: {}
+  resourceSelector: {}
+---
+apiVersion: mcm.ibm.com/v1alpha1
+kind: PlacementPolicy
+metadata:
+  annotations:
+    mcm.ibm.com/user-group: c3lzdGVtOmF1dGhlbnRpY2F0ZWQ=
+    mcm.ibm.com/user-identity: aHR0cHM6Ly8xMjcuMC4wLjE6ODQ0My9pZGF1dGgvb2lkYy9lbmRwb2ludC9PUCNhZG1pbg==
+  name: placement-policy-rhocp-sdn
+  namespace: kube-system
+spec:
+  clusterLabels:
+    matchExpressions:
+    - key: vendor
+      operator: In
+      values:
+      - OpenShift
+    - key: cloud
+      operator: In
+      values:
+      - RHOCP
+    - key: owner
+      operator: In
+      values:
+      - IT
+  resourceHint: {}
+  resourceSelector: {}
+
