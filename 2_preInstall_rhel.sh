@@ -2,84 +2,55 @@
 
 source ~/INSTALL/0_variables.sh
 
+
 echo "-----------------------------------------------------------------------------------------------------------"
 echo "-----------------------------------------------------------------------------------------------------------"
 echo "Installing Prerequisites";
 
-if [  -n "$(uname -a | grep Ubuntu)" ]; then
-  sudo apt-get  --yes --force-yes install snapd apt-transport-https ca-certificates curl software-properties-common python-minimal
-else
-  wget dl.fedoraproject.org/pub/epel/7/x86_64/Packages/e/epel-release-7-11.noarch.rpm
-  rpm -ihv epel-release-7-11.noarch.rpm
-  sudo yum install -y yum-utils device-mapper-persistent-data lvm2
-fi
+wget dl.fedoraproject.org/pub/epel/7/x86_64/Packages/e/epel-release-7-11.noarch.rpm
+rpm -ihv epel-release-7-11.noarch.rpm
 
+# Install docker & python on master
+sudo yum install -y yum-utils device-mapper-persistent-data lvm2
 
 
 echo "-----------------------------------------------------------------------------------------------------------"
 echo "-----------------------------------------------------------------------------------------------------------"
 echo "Installing Docker"
 # INSTALL DOCKER
+#snap install docker
 
-if [  -n "$(uname -a | grep Ubuntu)" ]; then
-  sudo apt-get install \
-      apt-transport-https \
-      ca-certificates \
-      curl \
-      software-properties-common
-  curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
-  sudo add-apt-repository \
-     "deb [arch=amd64] https://download.docker.com/linux/ubuntu \
-     $(lsb_release -cs) \
-     stable"
-  sudo apt-get update
-  sudo apt-get install docker-ce=18.03.1~ce-0~ubuntu
-else
-  sudo yum install -y yum-utils
-  sudo yum-config-manager --add-repo https://download.docker.com/linux/centos/docker-ce.repo
-  sudo yum makecache fast
-  sudo yum -y install docker-ce
-  sudo systemctl start docker
-fi
+sudo yum install -y yum-utils
+sudo yum-config-manager --add-repo https://download.docker.com/linux/centos/docker-ce.repo
+sudo yum makecache fast
+sudo yum -y install docker-ce
+sudo systemctl start docker
+sudo usermod -a -G docker icp
+
+#sudo curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
+#sudo add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable"
+#sudo apt-get --yes --force-yes update
+#sudo apt-get install --yes docker-ce=17.09.0~ce-0~ubuntu
 
 
-
-if [  -n "$(uname -a | grep Ubuntu)" ]; then
-  echo "-----------------------------------------------------------------------------------------------------------"
-  echo "-----------------------------------------------------------------------------------------------------------"
-  echo "Disable AppArmor"
-  # Disable AppArmor
-  sudo aa-status
-  sudo systemctl disable apparmor.service --now
-  sudo service apparmor teardown
-else
-  echo "-----------------------------------------------------------------------------------------------------------"
-  echo "-----------------------------------------------------------------------------------------------------------"
-  echo "Installing Python"
-  sudo yum install -y python-setuptools
-  sudo easy_install pip
-fi
-
-
-
+echo "-----------------------------------------------------------------------------------------------------------"
+echo "-----------------------------------------------------------------------------------------------------------"
+echo "Installing Python"
+sudo yum install -y python-setuptools
+sudo easy_install pip
 
 
 # Install Command Line Tools
 echo "Installing Tools";
+sudo yum install wget
+wget dl.fedoraproject.org/pub/epel/7/x86_64/Packages/e/epel-release-7-11.noarch.rpm
+sudo rpm -ihv epel-release-7-11.noarch.rpm
 
-if [  -n "$(uname -a | grep Ubuntu)" ]; then
-  sudo apt-get --yes --force-yes install tree
-  sudo apt-get --yes --force-yes install htop
-  sudo apt-get --yes --force-yes install curl
-  sudo apt-get --yes --force-yes install unzip
-  sudo apt-get --yes --force-yes install iftop
-else
-  sudo yum install -y tree
-  sudo yum install -y  htop
-  sudo yum install -y  curl
-  sudo yum install -y  unzip
-  sudo yum install -y  iftop
-fi
+sudo yum install -y tree
+sudo yum install -y  htop
+sudo yum install -y  curl
+sudo yum install -y  unzip
+sudo yum install -y  iftop
 
 
 echo "-----------------------------------------------------------------------------------------------------------"
@@ -99,11 +70,9 @@ sudo ntpdate -s time.nist.gov
 echo "-----------------------------------------------------------------------------------------------------------"
 echo "-----------------------------------------------------------------------------------------------------------"
 echo "Configure Firewall"
-sudo ufw disable
-
-
-
-
+sudo systemctl stop firewalld
+sudo systemctl disable firewalld
+sudo systemctl mask --now firewalld
 
 
 
@@ -220,13 +189,32 @@ else
   echo "No separate monitoring/management node"
 fi
 
-# Add line for external IP in config
+ne for external IP in config
 echo "cluster_access_ip: ${PUBLIC_IP}" | sudo tee -a ~/INSTALL/cluster/config.yaml
 echo "proxy_access_ip: ${PUBLIC_IP}" | sudo tee -a ~/INSTALL/cluster/config.yaml
 echo 'kubelet_extra_args: ["--max-pods=300 --pods-per-core=70"]' | sudo tee -a ~/INSTALL/cluster/config.yaml
 echo 'default_admin_password: admin' | sudo tee -a ~/INSTALL/cluster/config.yaml
 echo 'password_rules:' | sudo tee -a ~/INSTALL/cluster/config.yaml
 echo " - '(.*)'" | sudo tee -a ~/INSTALL/cluster/config.yaml
+echo 'single_cluster_mode: false' | sudo tee -a ~/INSTALL/cluster/config.yaml
+echo 'loopback_dns: true' | sudo tee -a ~/INSTALL/cluster/config.yaml
+
+
+nano ~/INSTALL/cluster/config.yaml
+
+management_services:
+  istio: disabled
+  vulnerability-advisor: disabled
+  storage-glusterfs: disabled
+  storage-minio: disabled
+  platform-security-netpols: disabled
+  node-problem-detector-draino: disabled
+  knative: disabled
+  multicluster-hub: enabled
+
+
+
+
 
 
 echo "-----------------------------------------------------------------------------------------------------------"

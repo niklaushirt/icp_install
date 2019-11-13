@@ -1,0 +1,295 @@
+
+apiVersion: policy.mcm.ibm.com/v1alpha1
+kind: Policy
+metadata:
+  annotations:
+    policy.mcm.ibm.com/categories: SystemAndInformationIntegrity
+
+    policy.mcm.ibm.com/standards: NIST
+    seed-generation: "3"
+  name: policy-all
+  namespace: kube-system
+spec:
+  complianceType: musthave
+  namespaces:
+    exclude:
+    - default
+    include:
+    - kube-system
+  object-templates:
+  - complianceType: musthave
+    objectDefinition:
+      apiVersion: v1
+      kind: Service
+      metadata:
+        name: icp-management-ingress
+      spec:
+        severity: low
+    status:
+      Validity: {}
+  remediationAction: inform
+---
+apiVersion: policy.mcm.ibm.com/v1alpha1
+kind: Policy
+metadata:
+  annotations:
+    policy.mcm.ibm.com/categories: SystemAndInformationIntegrity
+
+    policy.mcm.ibm.com/standards: PCI
+    seed-generation: "2"
+  name: policy-dev
+  namespace: kube-system
+  resourceVersion: "11689234"
+  selfLink: /apis/policy.mcm.ibm.com/v1alpha1/namespaces/kube-system/policies/policy-dev
+  uid: 988c0e82-f187-11e9-96e0-0cc47aa8903e
+spec:
+  complianceType: musthave
+  namespaces:
+    exclude:
+    - kube-*
+    include:
+    - default
+  object-templates:
+  - complianceType: musthave
+    objectDefinition:
+      apiVersion: v1
+      kind: LimitRange
+      metadata:
+        name: mem-limit-range
+      spec:
+        severity: low
+        limits:
+        - default:
+            memory: 512Mi
+          defaultRequest:
+            memory: 256Mi
+          type: Container
+    status:
+      Validity: {}
+  - complianceType: musthave
+    objectDefinition:
+      apiVersion: policy/v1beta1
+      kind: PodSecurityPolicy
+      metadata:
+        annotations:
+          seccomp.security.alpha.kubernetes.io/allowedProfileNames: '*'
+        name: restricted-mcm
+      spec:
+        severity: medium
+        allowPrivilegeEscalation: false
+        allowedCapabilities:
+        - '*'
+        fsGroup:
+          rule: RunAsAny
+        hostIPC: false
+        hostNetwork: true
+        hostPID: false
+        hostPorts:
+        - max: 65535
+          min: 1000
+        privileged: false
+        runAsUser:
+          rule: RunAsAny
+        seLinux:
+          rule: RunAsAny
+        supplementalGroups:
+          rule: RunAsAny
+        volumes:
+        - '*'
+    status:
+      Validity: {}
+  remediationAction: inform
+---
+apiVersion: policy.mcm.ibm.com/v1alpha1
+kind: Policy
+metadata:
+  annotations:
+    policy.mcm.ibm.com/categories: SystemAndCommunicationsProtections
+
+    policy.mcm.ibm.com/standards: FISMA
+    seed-generation: "1"
+  name: policy-mcm
+  namespace: kube-system
+spec:
+  severity: medium
+  complianceType: musthave
+  namespaces:
+    exclude:
+    - kube-*
+    include:
+    - multicluster-endpoint
+  object-templates:
+  - complianceType: musthave
+    objectDefinition:
+      apiVersion: apps/v1
+      kind: Deployment
+      metadata:
+        name: endpoint-appmgr
+      spec:
+        replicas: 1
+    status:
+      Validity: {}
+  remediationAction: inform
+---
+apiVersion: policy.mcm.ibm.com/v1alpha1
+kind: Policy
+metadata:
+  annotations:
+    policy.mcm.ibm.com/categories: SystemAndCommunicationsProtections
+
+    policy.mcm.ibm.com/standards: NIST
+  name: policy-network
+  namespace: kube-system
+spec:
+  severity: high
+  complianceType: musthave
+  namespaces:
+    exclude:
+    - openshift*
+    include:
+    - kube-system
+  object-templates:
+  - complianceType: musthave
+    objectDefinition:
+      apiVersion: apps/v1
+      kind: DaemonSet
+      metadata:
+        name: calico-node
+    status:
+      Validity: {}
+  remediationAction: inform
+---
+apiVersion: policy.mcm.ibm.com/v1alpha1
+kind: Policy
+metadata:
+  annotations:
+    policy.mcm.ibm.com/categories: SystemAndCommunicationsProtections, SystemAndInformationIntegrity
+
+    policy.mcm.ibm.com/standards: PCI
+    seed-generation: "0"
+  name: policy-prod
+  namespace: kube-system
+spec:
+  severity: high
+  complianceType: musthave
+  namespaces:
+    exclude:
+    - kube-*
+    include:
+    - default
+  object-templates:
+  - complianceType: musthave
+    objectDefinition:
+      apiVersion: v1
+      kind: LimitRange
+      metadata:
+        name: mem-limit-range
+      spec:
+        limits:
+        - default:
+            memory: 512Mi
+          defaultRequest:
+            memory: 256Mi
+          type: Container
+    status:
+      Validity: {}
+  - complianceType: musthave
+    objectDefinition:
+      apiVersion: v1
+      kind: Namespace
+      metadata:
+        name: prod
+    status:
+      Validity: {}
+  - complianceType: musthave
+    objectDefinition:
+      apiVersion: v1
+      kind: Pod
+      metadata:
+        name: nginx-pod
+      spec:
+        containers:
+        - image: nginx:1.7.9
+          name: nginx
+          ports:
+          - containerPort: 80
+    status:
+      Validity: {}
+  - complianceType: musthave
+    objectDefinition:
+      apiVersion: rbac.authorization.k8s.io/v1
+      kind: RoleBinding
+      metadata:
+        name: operate-pods-rolebinding
+      roleRef:
+        apiGroup: rbac.authorization.k8s.io
+        kind: Role
+        name: operator
+      subjects:
+      - apiGroup: rbac.authorization.k8s.io
+        kind: User
+        name: admin
+    status:
+      Validity: {}
+  - complianceType: musthave
+    objectDefinition:
+      apiVersion: policy/v1beta1
+      kind: PodSecurityPolicy
+      metadata:
+        annotations:
+          seccomp.security.alpha.kubernetes.io/allowedProfileNames: '*'
+        name: restricted-mcm
+      spec:
+        allowPrivilegeEscalation: false
+        allowedCapabilities:
+        - '*'
+        fsGroup:
+          rule: RunAsAny
+        hostIPC: false
+        hostNetwork: true
+        hostPID: false
+        hostPorts:
+        - max: 65535
+          min: 1000
+        privileged: false
+        runAsUser:
+          rule: RunAsAny
+        seLinux:
+          rule: RunAsAny
+        supplementalGroups:
+          rule: RunAsAny
+        volumes:
+        - '*'
+    status:
+      Validity: {}
+  remediationAction: enforce
+---
+apiVersion: policy.mcm.ibm.com/v1alpha1
+kind: Policy
+metadata:
+  annotations:
+    policy.mcm.ibm.com/categories: SystemAndCommunicationsProtections
+
+    policy.mcm.ibm.com/standards: FISMA
+    seed-generation: "1"
+  name: policy-rhocp-sdn
+  namespace: kube-system
+spec:
+  severity: low
+  complianceType: musthave
+  namespaces:
+    exclude:
+    - kube-*
+    include:
+    - openshift-sdn
+  object-templates:
+  - complianceType: musthave
+    objectDefinition:
+      apiVersion: apps/v1
+      kind: DaemonSet
+      metadata:
+        name: sdn
+    status:
+      Validity: {}
+  remediationAction: inform
+
