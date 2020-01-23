@@ -1,0 +1,26 @@
+kind: ManagedSet
+apiVersion: kapitan.razee.io/v1alpha1
+metadata:
+  name: managed-set
+  namespace: default
+spec:
+  resources:
+    - apiVersion: "kapitan.razee.io/v1alpha1"
+      kind: MustacheTemplate
+      metadata:
+        name: mustache-template
+        namespace: default
+      spec:
+        env:
+        - name: sample-app-nameπ
+          value: "guestbook1"
+        templates:
+          - apiVersion: kapitan.razee.io/v1alpha1
+            kind: RemoteResource
+            metadata:
+              name: remote-{{sample-app-name}}
+              namespace: default
+            spec:
+              requests:
+                - options:
+                  url: https://raw.githubusercontent.com/gitopsk8s/test/master/guestbook.yaml                

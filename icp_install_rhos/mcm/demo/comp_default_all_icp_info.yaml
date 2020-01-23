@@ -1,0 +1,99 @@
+apiVersion: compliance.mcm.ibm.com/v1alpha1
+kind: Compliance
+metadata:
+  name: default-all-icp-informational
+  finalizers:
+    - propagator.finalizer.mcm.ibm.com
+  generation: 1
+  namespace: mcm-namespace
+spec:
+  runtime-rules:
+    - apiVersion: policy.mcm.ibm.com/v1alpha1
+      kind: Policy
+      metadata:
+        name: default-all-icp-informational
+        labels:
+          targets: all-icp
+      spec:
+        complianceType: musthave
+        namespaces:
+          exclude:
+            - kube*
+          include:
+            - default
+        object-templates:
+          - complianceType: musthave
+            objectDefinition:
+              apiVersion: rbac.authorization.k8s.io/v1
+              kind: RoleBinding
+              metadata:
+                name: operate-pods-rolebinding
+                namespace: default
+              roleRef:
+                name: operator
+                apiGroup: rbac.authorization.k8s.io
+                kind: Role
+              subjects:
+                - name: admin
+                  apiGroup: rbac.authorization.k8s.io
+                  kind: User
+        remediationAction: inform
+        role-templates:
+          - apiVersion: roletemplate.mcm.ibm.com/v1alpha1
+            complianceType: musthave
+            metadata:
+              name: engineer-role
+            rules:
+              - complianceType: mustnothave
+                policyRule:
+                  apiGroups:
+                    - core
+                  resources:
+                    - secrets
+                  verbs:
+                    - list
+              - complianceType: musthave
+                policyRule:
+                  apiGroups:
+                    - core
+                  resources:
+                    - pods
+                    - configmaps
+                    - deployments
+                  verbs:
+                    - get
+                    - list
+                    - watch
+                    - delete
+                    - create
+                    - update
+                    - patch
+
+
+
+---
+# this is a placement policy that selects clusters based on a label
+apiVersion: mcm.ibm.com/v1alpha1
+kind: PlacementPolicy
+metadata:
+  name: placement-compliance-icp-base-informational
+  namespace: mcm-namespace
+spec:
+  clusterLabels:
+    matchLabels:
+      owner: it
+---
+# this is a placement binding that binds the placement policy and the compliance policy
+apiVersion: mcm.ibm.com/v1alpha1
+kind: PlacementBinding
+metadata:
+  name: binding-compliance-icp-base-informational
+  namespace: mcm-namespace
+placementRef:
+  name: placement-compliance-icp-base-informational
+  apiGroup: mcm.ibm.com
+  kind: PlacementPolicy
+subjects:
+- name: default-all-icp-informational
+  apiGroup: mcm.ibm.com
+  kind: Compliance

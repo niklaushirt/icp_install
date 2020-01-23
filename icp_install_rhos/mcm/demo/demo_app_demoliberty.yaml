@@ -1,0 +1,78 @@
+apiVersion: app.k8s.io/v1beta1
+kind: Application
+metadata:
+  name: demoliberty
+  labels:
+    app: demoliberty
+spec:
+  selector:
+    matchLabels:
+      app: demoliberty
+  componentKinds:
+  - group: core
+    kind: Service
+  - group: apps
+    kind: Deployment
+---
+apiVersion: mcm.ibm.com/v1alpha1
+kind: ApplicationRelationship
+metadata:
+  name: demoliberty
+  labels:
+    app: demoliberty
+spec:
+  type: contains
+  source:
+    kind: Application
+    name: demoliberty
+  destination:
+    kind: Deployable
+    name: demoliberty
+---
+apiVersion: mcm.ibm.com/v1alpha1
+kind: Deployable
+metadata:
+  name: demoliberty
+  labels:
+    app: demoliberty
+spec:
+  deployer:
+    kind: helm
+    helm:
+      repository: argocd
+      chartName: demoliberty
+      version: 1.3.0
+      namespace: default
+---
+apiVersion: mcm.ibm.com/v1alpha1
+kind: PlacementBinding
+metadata:
+  name: demoliberty
+  labels:
+    app: demoliberty
+placementRef:
+  apiGroup: mcm.ibm.com
+  kind: PlacementPolicy
+  name: demoliberty
+subjects:
+- apiGroup: mcm.ibm.com
+  kind: Deployable
+  name: demoliberty
+---
+apiVersion: mcm.ibm.com/v1alpha1
+kind: PlacementPolicy
+metadata:
+  name: demoliberty
+  labels:
+    app: demoliberty
+spec:
+  clusterLabels:
+    matchLabels:
+      cloud: IBM
+      environment: Dev
+      owner: it
+      region: US
+      vendor: ICP
+  clusterReplicas: 1
+  resourceHint: {}
+  resourceSelector: {}
