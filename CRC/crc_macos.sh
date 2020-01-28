@@ -18,7 +18,7 @@ crc config set cpus 12
 crc config view
 
 crc setup
-
+chmod 0600 /etc/hosts
 crc start
 
 crc stop
