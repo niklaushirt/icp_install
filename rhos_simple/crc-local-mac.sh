@@ -9,19 +9,41 @@ tar xf crc-linux-amd64.tar.xz
 sudo mv crc-linux-1.2.0-amd64/crc /usr/local/bin
 
 
-crc config view
 
-crc config set pull-secret-file /root/pull-secret
-crc config set memory 16800
-crc config set cpus 4
 
-crc config view
+# MAC
+
+crc delete -f
+sudo rm -r .crc
 
 crc setup
+
+crc config set pull-secret-file /Users/nhirt/VMWARE/pull-secret
+crc config set memory 16800
+crc config set cpus 8
+
+crc config view
 
 crc start
 
 
+
+
+
+# FEDORA
+
+crc delete -f
+sudo rm -r .crc
+
+crc setup
+
+crc config set pull-secret-file /root/pull-secret
+crc config set memory 32800
+crc config set cpus 8
+
+crc config view
+
+crc start
 
 
 
